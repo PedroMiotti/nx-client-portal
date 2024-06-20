@@ -4,8 +4,8 @@ import Cookies from "js-cookie";
 
 const GATEWAY_PREFIX: string = "/auth";
 
-export const authenticate = (email: string, password: string) => {
-  return Api.post(`${GATEWAY_PREFIX}/login`, { email, password });
+export const authenticate = (document: string) => {
+  return Api.post(`${GATEWAY_PREFIX}/login/client`, { document });
 };
 
 export const refreshSession = (accessToken: string, refreshToken: string) => {

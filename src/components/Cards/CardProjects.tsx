@@ -10,13 +10,12 @@ import Image, { StaticImageData } from "next/image";
 
 type CardProjectsProps = {
   title: string;
-  year: string;
-  code: string;
   img: StaticImageData;
   value: number;
+  onClick: () => void;
 };
 
-const CardProjects = ({ title, year, code, img, value }: CardProjectsProps) => {
+const CardProjects = ({ title, onClick, img, value }: CardProjectsProps) => {
   return (
     <Box
       bg={"white"}
@@ -25,6 +24,8 @@ const CardProjects = ({ title, year, code, img, value }: CardProjectsProps) => {
       borderWidth="1px"
       borderColor="gray.200"
       minW={"330px"}
+      onClick={onClick}
+      cursor={"pointer"}
     >
       <Box
         height="200px"

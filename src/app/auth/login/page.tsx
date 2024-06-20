@@ -18,7 +18,7 @@ import {
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 
-import NexusLogo from "../../../../public/nexus-logo.svg";
+import NexusLogo from "../../../../public/images/nexus-logo.svg";
 import {
   AuthenticateRequestDto,
   useAuthenticateUser,
@@ -26,8 +26,7 @@ import {
 import CustomCard from "@/components/CustomCard";
 
 export default function Login() {
-  const [emailValue, setEmailValue] = useState("");
-  const [passwordValue, setPasswordValue] = useState("");
+  const [documentValue, setDocumentValue] = useState("");
   const [isAuthRequestPending, setIsAuthRequestPending] = useState(false);
   const [redirectToReferrer, setRedirectToReferrer] = useState(false);
 
@@ -35,14 +34,14 @@ export default function Login() {
   const toast = useToast();
   const { handleAuthenticate } = useAuthenticateUser();
 
-  if (redirectToReferrer) router.push("/");
+  if (redirectToReferrer) router.push("/projects");
 
   const handleLoginRequest = async (data: AuthenticateRequestDto) => {
     setIsAuthRequestPending(true);
     const response = await handleAuthenticate(data);
 
     if (response) {
-      router.push("/");
+      router.push("/projects");
       setIsAuthRequestPending(false);
     } else {
       toast({
@@ -59,7 +58,7 @@ export default function Login() {
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
-      handleLoginRequest({ email: emailValue, password: passwordValue });
+      handleLoginRequest({ document: documentValue });
     }
   };
 
@@ -109,39 +108,26 @@ export default function Login() {
             <Stack spacing={4} w={"full"} px={7} py={4}>
               <Flex direction="column" mb={4} gap={2}>
                 <Heading fontSize="24px" fontWeight="600">
-                  Entrar
+                  Portal do Cliente
                 </Heading>
                 <Text fontSize={"14px"} fontWeight={"400"} color="#616161">
-                  Por favor, insira suas informações de acesso.
+                  Por favor, insira seu cpf.
                 </Text>
               </Flex>
 
               <FormControl id="email">
                 <FormLabel fontSize="14px" fontWeight="600">
-                  Email
+                  CPF
                 </FormLabel>
                 <Input
                   fontSize="sm"
-                  placeholder="joao@exemplo.com.br"
-                  value={emailValue}
+                  placeholder="000.000.000-00"
+                  value={documentValue}
                   onKeyDown={handleKeyDown}
-                  onChange={(e) => setEmailValue(e.target.value)}
-                  type="email"
+                  onChange={(e) => setDocumentValue(e.target.value)}
                 />
               </FormControl>
-              <FormControl id="password">
-                <FormLabel fontSize="14px" fontWeight="600">
-                  Senha
-                </FormLabel>
-                <Input
-                  fontSize="sm"
-                  onKeyDown={handleKeyDown}
-                  placeholder="**********"
-                  value={passwordValue}
-                  onChange={(e) => setPasswordValue(e.target.value)}
-                  type="password"
-                />
-              </FormControl>
+
               <Stack spacing={6}>
                 <Stack
                   direction={{ base: "column", sm: "row" }}
@@ -150,17 +136,9 @@ export default function Login() {
                 >
                   <Checkbox>
                     <Text fontSize={"14px"} color="#616161">
-                      Lembrar informações
+                      Lembrar acesso
                     </Text>
                   </Checkbox>
-                  <Link
-                    fontWeight="500"
-                    fontSize="12px"
-                    color="blue.500"
-                    textDecoration={"underline"}
-                  >
-                    Esqueci a senha
-                  </Link>
                 </Stack>
                 <Button
                   mt={7}
@@ -169,8 +147,7 @@ export default function Login() {
                   isLoading={isAuthRequestPending}
                   onClick={() =>
                     handleLoginRequest({
-                      email: emailValue,
-                      password: passwordValue,
+                      document: documentValue,
                     })
                   }
                 >

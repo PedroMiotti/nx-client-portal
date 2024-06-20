@@ -9,8 +9,7 @@ import { TokenPayload } from "@/shared/types/Auth";
 import { fetchUserById } from "../api/User";
 
 export type AuthenticateRequestDto = {
-  email: string;
-  password: string;
+  document: string;
 };
 
 type AdminUser = User & {
@@ -64,7 +63,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
   const handleAuthenticate = async (
     dto: AuthenticateRequestDto
   ): Promise<boolean | undefined> => {
-    return authenticate(dto.email, dto.password)
+    return authenticate(dto.document)
       .then(async (response) => {
         if (response && response.status === HttpStatusCode.Created) {
           const { AccessToken, RefreshToken } = response.data;

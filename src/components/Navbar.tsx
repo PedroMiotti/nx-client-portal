@@ -21,15 +21,26 @@ import { RxHamburgerMenu } from "react-icons/rx";
 import { IoMdClose } from "react-icons/io";
 import LogoPoles from "../../public/images/LogoFpoles.png";
 import Image from "next/image";
+import { useAuthenticateUser } from "@/lib/context/user";
+import { usePathname, useRouter } from "next/navigation";
 
 interface Props {
   children: React.ReactNode;
 }
 
-export default function Navbar() {
-  const { isOpen, onOpen, onClose } = useDisclosure();
+const excludedRoutes = ["/auth"];
 
-  return (
+export default function Navbar() {
+  const pathname = usePathname();
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const { user, handleLogout } = useAuthenticateUser();
+  const router = useRouter();
+
+  const isExcludedRoute = excludedRoutes.find((route) =>
+    pathname.includes(route)
+  );
+
+  return !isExcludedRoute ? (
     <>
       <Box
         bg={"white"}
@@ -45,7 +56,7 @@ export default function Navbar() {
           </HStack>
           <HStack>
             <Text fontSize={"sm"} display={{ base: "none", md: "contents" }}>
-              Seja bem-vindo(a), João Moraes
+              Seja bem-vindo(a), {user?.Name}
             </Text>
             <Flex alignItems={"center"}>
               <Menu>
@@ -56,16 +67,25 @@ export default function Navbar() {
                   cursor={"pointer"}
                   minW={0}
                 >
-                  <Avatar
-                    size={"sm"}
-                    src={
-                      "https://images.unsplash.com/photo-1493666438817-866a91353ca9?ixlib=rb-0.3.5&q=80&fm=jpg&crop=faces&fit=crop&h=200&w=200&s=b616b2c5b373a80ffc9636ba24f7a4a9"
-                    }
-                  />
+                  <Avatar size={"sm"} name={user?.Name} />
                 </MenuButton>
                 <MenuList>
                   <MenuItem>Minha conta</MenuItem>
-                  <MenuItem>Sair</MenuItem>
+                  <MenuItem
+                    onClick={() => {
+                      router.push("/projects");
+                    }}
+                  >
+                    Meus projetos
+                  </MenuItem>
+                  <MenuItem
+                    onClick={() => {
+                      handleLogout();
+                      router.push("/auth/login");
+                    }}
+                  >
+                    Sair
+                  </MenuItem>
                 </MenuList>
               </Menu>
             </Flex>
@@ -73,5 +93,5 @@ export default function Navbar() {
         </Flex>
       </Box>
     </>
-  );
+  ) : null;
 }
