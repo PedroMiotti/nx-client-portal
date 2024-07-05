@@ -5,14 +5,12 @@ import {
   Image,
   Box,
   Text,
-  Divider,
   IconButton,
   Menu,
   MenuButton,
   MenuItem,
   MenuList,
   Avatar,
-  useToast,
 } from "@chakra-ui/react";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import {
@@ -26,26 +24,16 @@ import {
 } from "react-icons/pi";
 import Typography from "../Typography";
 
-import {
-  MdDriveFolderUpload,
-  MdOutlineCloudDownload,
-  MdDriveFileRenameOutline,
-  MdDeleteOutline,
-} from "react-icons/md";
+import { MdOutlineCloudDownload } from "react-icons/md";
 import { formatDateTime } from "@/shared/utils/Date";
 import { blobToURL } from "@/shared/utils/Blob";
 import { DriveFile } from "@/shared/types/File";
 
 interface FileProps {
   file: DriveFile;
-  handleRename?: (file: DriveFile) => void;
-  handleMove?: (file: DriveFile) => void;
-  refetch: () => void;
 }
 
-const File = ({ file, handleRename, handleMove, refetch }: FileProps) => {
-  const toast = useToast();
-
+const File = ({ file }: FileProps) => {
   const handleDownload = async () => {
     const response = await fetch(file.Url);
     const blob = await response.blob();

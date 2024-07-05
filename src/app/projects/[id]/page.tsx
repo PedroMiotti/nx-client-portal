@@ -6,7 +6,6 @@ import {
   Flex,
   Heading,
   Progress,
-  SimpleGrid,
   Tag,
   Text,
 } from "@chakra-ui/react";
@@ -19,16 +18,20 @@ import { useQuery } from "@tanstack/react-query";
 import { fetchProjectById } from "@/lib/api/Projects";
 import Loader from "@/components/Loader";
 import { fetchProjectFolderContent } from "@/lib/api/Drive";
-import File from "@/components/Drive/File";
+import ArchiveTable from "@/components/Drive/ArchiveTable";
+import ProjectPhaseProgress from "../components/ProjectPhaseProgress";
+import { useMemo } from "react";
+import { Task } from "@/shared/types/Projects";
 
 export default function ProjectHome() {
-  const searchParams = useSearchParams();
-  const router = useRouter();
   const params = useParams();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
   const projectId = params.id;
   const folderId = searchParams.get("folderId");
 
-  const { data, isLoading, refetch } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: ["project", projectId],
     queryFn: () => fetchProjectById(Number(projectId)),
   });
@@ -38,27 +41,42 @@ export default function ProjectHome() {
     queryFn: () => fetchProjectFolderContent(Number(projectId), folderId),
   });
 
-  if (isLoading || archivesIsLoading) return <Loader />;
+  const projectProgress = useMemo(() => {
+    if (!data || data.Phase.length === 0) return 0;
+
+    const allTasks = data.Phase.reduce((acc, phase) => {
+      return [...acc, ...(phase?.Task ?? [])];
+    }, [] as Task[]);
+
+    const concludedPercentage = allTasks.filter(
+      (task) =>
+        task.BoardStatus.BoardStatusTypeId === 3 ||
+        task.BoardStatus.BoardStatusTypeId === 4
+    ).length;
+
+    return Math.ceil((concludedPercentage / allTasks.length) * 100);
+  }, [data]);
+
+  if (isLoading || archivesIsLoading || !data) return <Loader />;
+
   return (
-    <Flex h={"full"} w={"full"} p={8} direction={"row"} gap={8}>
-      <Flex w={"50%"} h={"full"} direction={"column"} gap={8}>
+    <Flex h={"full"} w={"full"} p={8} direction={"row"} gap={6}>
+      <Flex flex={1} h={"full"} direction={"column"} gap={6}>
         <Flex
           w={"full"}
-          h={"212px"}
-          border={"1px solid"}
           rounded={"xl"}
+          border={"1px solid"}
           borderColor={"#E9E9E9"}
-          display={"flex"}
         >
-          <Box
-            w={"45%"}
+          <Flex
+            w={"full"}
             border={"1px solid"}
             rounded={"xl"}
             borderColor={"#E9E9E9"}
-            display={"flex"}
             justifyContent={"center"}
             alignItems={"center"}
             position="relative"
+            flex={1}
           >
             <Image
               src={Casa1}
@@ -66,89 +84,76 @@ export default function ProjectHome() {
               fill
               style={{ objectFit: "cover", borderRadius: "10px" }}
             />
-          </Box>
+          </Flex>
           <Flex
             direction={"column"}
             justify={"start"}
             align={"start"}
             h={"full"}
-            w={"55%"}
+            flex={1}
             p={4}
             gap={2}
           >
-            <Flex
-              direction={"row"}
-              w={"full"}
-              justify={"space-between"}
-              align={"center"}
-              mb={4}
-            >
-              <Text
-                fontSize={"2xl"}
-                fontFamily={"title"}
-                color={"#494949"}
-                fontWeight={"semibold"}
-              >
-                {data?.Name}
-              </Text>
-              <Text
-                fontFamily={"title"}
-                color={"#727272"}
-                fontWeight={"semibold"}
-              >
-                <Tag colorScheme="red">{data?.Tag}</Tag>
-              </Text>
-            </Flex>
             <Text
-              fontFamily={"title"}
-              color={"#727272"}
               fontWeight={"semibold"}
+              fontFamily={"title"}
+              color={"#494949"}
+              fontSize={"lg"}
+              whiteSpace={"wrap"}
+              overflow={"hidden"}
+              maxW={"auto"}
             >
-              Local: Residencial Giverny, Sorocaba-SP
+              {data?.Name}
             </Text>
+
+            <Tag colorScheme="blue" size={"sm"}>
+              {data?.Tag}
+            </Tag>
 
             <Text
               fontFamily={"title"}
               color={"#727272"}
-              fontWeight={"semibold"}
+              fontWeight={"500"}
+              fontSize={"sm"}
             >
-              Ano: {data?.CreatedAt?.substring(0, 4)}
+              Local: Residencial Giverny, Sorocaba-SP
             </Text>
           </Flex>
         </Flex>
+
         <Flex
           border={"1px solid"}
           borderColor={"#E9E9E9"}
           w={"full"}
-          h={"450px"}
           rounded={"xl"}
-          p={6}
-          gap={3}
+          gap={2}
           direction={"column"}
         >
           <Flex
             justify={"space-between"}
             w={"full"}
             align={"center"}
-            h={"50px"}
+            p={"25px 25px 0 25px"}
           >
             <Flex direction={"column"}>
-              <Heading fontSize={"2xl"} color={"#494949"} fontWeight={"light"}>
+              <Heading fontSize={"lg"} color={"#494949"} fontWeight={"light"}>
                 {`Arquivos (${archives?.files?.length})`}
               </Heading>
-              <Text
-                fontFamily={"title"}
-                color={"#B3B3B3"}
-                fontSize={"sm"}
-                fontWeight={"semibold"}
-              >
-                Pastas alteradas recentemente:
+              <Text fontFamily={"title"} color={"#B3B3B3"} fontSize={"sm"}>
+                Recentes
               </Text>
             </Flex>
-            <Button leftIcon={<MdOutlineOpenInNew />} colorScheme="blue">
+            <Button
+              leftIcon={<MdOutlineOpenInNew />}
+              bg="blue.500"
+              color={"white"}
+              size={"sm"}
+              onClick={() => router.push(`/projects/${projectId}/file`)}
+            >
               Ver todos
             </Button>
           </Flex>
+
           <Box
             p={2}
             flexDir={"column"}
@@ -175,24 +180,18 @@ export default function ProjectHome() {
             {!archives ? (
               <Flex>Sem nenhum arquivo</Flex>
             ) : (
-              <>
-                <Flex mt={2} p={2} flexDir={"column"} gap={4}>
-                  <SimpleGrid columns={2} spacing={2}>
-                    {archives?.files?.map((file) => {
-                      return (
-                        <File key={file.Id} file={file} refetch={refetch} />
-                      );
-                    })}
-                  </SimpleGrid>
-                </Flex>
-              </>
+              <ArchiveTable
+                files={[
+                  ...(archives?.files ?? []),
+                  ...(archives?.folders ?? []),
+                ]}
+              />
             )}
           </Box>
         </Flex>
       </Flex>
       <Flex
-        w={"50%"}
-        h={"690px"}
+        flex={1}
         rounded={"xl"}
         border={"1px solid"}
         borderColor={"#E9E9E9"}
@@ -213,29 +212,26 @@ export default function ProjectHome() {
             direction={"row"}
           >
             <Flex flex={1}>
-              <Heading fontSize={"3xl"} color={"#494949"} fontWeight={"light"}>
+              <Heading fontSize={"lg"} color={"#494949"} fontWeight={"light"}>
                 Etapas
               </Heading>
             </Flex>
-            <Flex direction={"row"} align={"center"} flex={1}>
-              <Flex w={"50%"}>
-                <Text fontSize={"sm"} color={"#B3B3B3"}>
-                  Progresso total:
-                </Text>
-              </Flex>
-              <Flex direction={"column"} w={"50%"}>
-                <Text textAlign={"end"}>15%</Text>
-                <Progress
-                  colorScheme="green"
-                  size="sm"
-                  value={20}
-                  rounded={"md"}
-                />
-              </Flex>
+            <Flex direction={"row"} align={"center"} flex={1} gap={2}>
+              <Text fontSize={"xs"}>Progresso total:</Text>
+              <Progress
+                colorScheme="green"
+                size="xs"
+                value={projectProgress}
+                rounded={"md"}
+                w={"50%"}
+              />
+              <Text textAlign={"end"} fontSize={"xs"} color={"#B3B3B3"}>
+                {projectProgress}%
+              </Text>
             </Flex>
           </Flex>
           <Flex w={"full"}>
-            <PhasesAccordion />
+            <ProjectPhaseProgress project={data} />
           </Flex>
         </Flex>
       </Flex>

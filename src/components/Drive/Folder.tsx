@@ -24,12 +24,9 @@ import { downloadFolder } from "@/lib/api/Drive";
 
 interface FolderProps {
   folder: DriveFolder;
-  handleRename?: (folder: DriveFolder) => void;
-  handleMove?: (folder: DriveFolder) => void;
-  refetch: () => void;
 }
 
-const Folder = ({ folder, handleRename, handleMove, refetch }: FolderProps) => {
+const Folder = ({ folder }: FolderProps) => {
   const toast = useToast();
   const router = useRouter();
   const pathname = usePathname();
