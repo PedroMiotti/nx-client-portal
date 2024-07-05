@@ -211,19 +211,19 @@ export default function ProjectHome() {
             w={"full"}
             direction={"row"}
           >
-            <Flex flex={1}>
+            <Flex >
               <Heading fontSize={"lg"} color={"#494949"} fontWeight={"light"}>
                 Etapas
               </Heading>
             </Flex>
-            <Flex direction={"row"} align={"center"} flex={1} gap={2}>
+            <Flex direction={"row"} align={"center"} gap={2} w={'fit-content'}>
               <Text fontSize={"xs"}>Progresso total:</Text>
               <Progress
                 colorScheme="green"
                 size="xs"
                 value={projectProgress}
                 rounded={"md"}
-                w={"50%"}
+                w={"120px"}
               />
               <Text textAlign={"end"} fontSize={"xs"} color={"#B3B3B3"}>
                 {projectProgress}%

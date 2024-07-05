@@ -97,7 +97,7 @@ const ArchiveTable = ({ files }: ArchiveTableProps) => {
               whiteSpace={"nowrap"}
               textOverflow={"ellipsis"}
               overflow={"hidden"}
-              maxW={"200px"}
+              maxW={"230px"}
             >
               {info.getValue()}
               {isFile ? fileExtension : ""}
@@ -106,7 +106,6 @@ const ArchiveTable = ({ files }: ArchiveTableProps) => {
         );
       },
       header: "Nome",
-      size: 10,
     }),
     archiveColumnBuilder.display({
       id: "ModifiedBy",
