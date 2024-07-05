@@ -34,14 +34,14 @@ export default function Login() {
   const toast = useToast();
   const { handleAuthenticate } = useAuthenticateUser();
 
-  if (redirectToReferrer) router.push("/projects");
+  if (redirectToReferrer) router.push("/");
 
   const handleLoginRequest = async (data: AuthenticateRequestDto) => {
     setIsAuthRequestPending(true);
     const response = await handleAuthenticate(data);
 
     if (response) {
-      router.push("/projects");
+      router.push("/");
       setIsAuthRequestPending(false);
     } else {
       toast({
