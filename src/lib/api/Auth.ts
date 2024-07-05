@@ -20,8 +20,8 @@ export const logout = (accessToken: string) => {
 };
 
 export const _refreshToken = async () => {
-  const currentRefreshToken = Cookies.get("arc:refresh_token");
-  const currentAccessToken = Cookies.get("arc:access_token");
+  const currentRefreshToken = Cookies.get("arc:client:refresh_token");
+  const currentAccessToken = Cookies.get("arc:client:access_token");
 
   if (!currentRefreshToken || !currentAccessToken) return;
 
@@ -34,12 +34,12 @@ export const _refreshToken = async () => {
     const { AccessToken, RefreshToken } = response?.data;
     if (!AccessToken || !RefreshToken) {
       window.location.href = "/auth/login";
-      Cookies.remove("arc:refresh_token");
-      Cookies.remove("arc:access_token");
+      Cookies.remove("arc:client:refresh_token");
+      Cookies.remove("arc:client:access_token");
     }
 
-    Cookies.set("arc:access_token", AccessToken);
-    Cookies.set("arc:refresh_token", RefreshToken);
+    Cookies.set("arc:client:access_token", AccessToken);
+    Cookies.set("arc:client:refresh_token", RefreshToken);
 
     return {
       AccessToken,
@@ -48,8 +48,8 @@ export const _refreshToken = async () => {
   } catch (e) {
     console.log(e);
     window.location.href = "/auth/login";
-    Cookies.remove("arc:refresh_token");
-    Cookies.remove("arc:access_token");
+    Cookies.remove("arc:client:refresh_token");
+    Cookies.remove("arc:client:access_token");
   }
 };
 

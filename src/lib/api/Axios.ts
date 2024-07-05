@@ -32,7 +32,7 @@ export const Api = axios.create({
 
 Api.interceptors.request.use(
   async (config: InternalAxiosRequestConfig<any>) => {
-    const token = Cookies.get("arc:access_token");
+    const token = Cookies.get("arc:client:access_token");
 
     if (token && !config?.headers?.Authorization)
       config.headers.Authorization = `Bearer ${token}`;

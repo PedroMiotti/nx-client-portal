@@ -68,8 +68,8 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
         if (response && response.status === HttpStatusCode.Created) {
           const { AccessToken, RefreshToken } = response.data;
 
-          Cookies.set("arc:access_token", AccessToken);
-          Cookies.set("arc:refresh_token", RefreshToken);
+          Cookies.set("arc:client:access_token", AccessToken);
+          Cookies.set("arc:client:refresh_token", RefreshToken);
 
           const payload: TokenPayload = jwtDecode(AccessToken);
 
@@ -91,14 +91,14 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   const handleLogout = async () => {
-    const accessToken = Cookies.get("arc:access_token");
+    const accessToken = Cookies.get("arc:client:access_token");
 
     if (!accessToken) return;
 
     // await logout(accessToken);
 
-    Cookies.remove("arc:access_token");
-    Cookies.remove("arc:refresh_token");
+    Cookies.remove("arc:client:access_token");
+    Cookies.remove("arc:client:refresh_token");
     localStorage.clear();
 
     setUser(null);
@@ -118,7 +118,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
     if (user) return;
 
     (async () => {
-      const accessToken = Cookies.get("arc:access_token");
+      const accessToken = Cookies.get("arc:client:access_token");
 
       if (!accessToken) return;
 

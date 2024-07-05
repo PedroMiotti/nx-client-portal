@@ -14,7 +14,7 @@ const ProtectedWrapper = ({ children }: ProtectedWrapperProps) => {
   const searchParams = useSearchParams();
 
   const handleRouteChange = (url: string) => {
-    const userIsAuthenticated = Cookies.get("arc:access_token");
+    const userIsAuthenticated = Cookies.get("arc:client:access_token");
 
     if (!userIsAuthenticated && url !== "/auth/login")
       router.push("/auth/login");
