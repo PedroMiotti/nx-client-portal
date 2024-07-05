@@ -5,7 +5,7 @@ export type User = {
   DocumentType: string;
   Email: string;
   IsActive?: boolean;
-  ParentUserId?: number;
+  ParentId?: number;
   Password: string;
   Phone?: number;
   UserTypeId: number;

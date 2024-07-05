@@ -7,6 +7,8 @@ import { User } from "@/shared/types/User";
 import { UserType } from "@/shared/enum/User";
 import { TokenPayload } from "@/shared/types/Auth";
 import { fetchUserById } from "../api/User";
+import { OrganizationSettings } from "@/shared/types/OrganizationSettings";
+import { fetchOrganizationSettingsByOwnerId } from "../api/OrganizationSettings";
 
 export type AuthenticateRequestDto = {
   document: string;
@@ -26,13 +28,13 @@ type OwnerUser = User & {
 
 type MemberUser = User & {
   UserTypeId: UserType.MEMBER;
-  ParentUserId: number;
+  ParentId: number;
   IsMaster: false;
 };
 
 type ClientUser = User & {
   UserTypeId: UserType.CLIENT;
-  ParentUserId: number;
+  ParentId: number;
   IsMaster: false;
 };
 
@@ -40,6 +42,7 @@ export type CurrentUser = AdminUser | MemberUser | OwnerUser | ClientUser;
 
 interface UserContextType {
   user: CurrentUser | null;
+  organizationSettings: OrganizationSettings | null;
   handleAuthenticate: (
     dto: AuthenticateRequestDto
   ) => Promise<boolean | undefined>;
@@ -49,6 +52,7 @@ interface UserContextType {
 
 export const UserContext = createContext<UserContextType>({
   user: {} as CurrentUser,
+  organizationSettings: {} as OrganizationSettings,
   handleAuthenticate: async () => false,
   handleLogout: async () => {},
   //   permissions: [],
@@ -58,6 +62,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [user, setUser] = useState<CurrentUser | null>(null);
+  const [organizationSettings, setOrganizationSettings] = useState<OrganizationSettings | null>(null);
   const [permissions, setPermissions] = useState<[]>([]);
 
   const handleAuthenticate = async (
@@ -76,6 +81,13 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
           const user = await fetchUserById(+payload.Id);
 
           if (!user) return false;
+
+          const isMasterUser = user.UserTypeId === UserType.OWNER;
+          const ownerId = isMasterUser ? user.Id : user.ParentId
+          
+          const organizationSettings = await fetchOrganizationSettingsByOwnerId(ownerId!);
+
+          setOrganizationSettings(organizationSettings);
 
           if (user.UserTypeId === UserType.MEMBER) setUser(user as MemberUser);
           else setUser(user as AdminUser | OwnerUser);
@@ -129,6 +141,12 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
       if (fetchedUser.UserTypeId === UserType.MEMBER)
         setUser(fetchedUser as MemberUser);
       else setUser(fetchedUser as AdminUser | OwnerUser);
+
+      const isMasterUser = fetchedUser.UserTypeId === UserType.OWNER;
+      const ownerId = isMasterUser ? fetchedUser.Id : fetchedUser.ParentId
+      const organizationSettings = await fetchOrganizationSettingsByOwnerId(ownerId!);
+
+      setOrganizationSettings(organizationSettings);
     })();
   }, []);
 
@@ -136,6 +154,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
     <UserContext.Provider
       value={{
         user,
+        organizationSettings,
         handleAuthenticate,
         handleLogout,
         // permissions,

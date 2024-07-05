@@ -27,6 +27,7 @@ import { BsThreeDotsVertical } from "react-icons/bs";
 import { MdOutlineCloudDownload } from "react-icons/md";
 import { blobToURL } from "@/shared/utils/Blob";
 import { downloadFolder } from "@/lib/api/Drive";
+import { useAuthenticateUser } from "@/lib/context/user";
 
 type ArchiveFile = DriveFile | DriveFolder;
 
@@ -36,6 +37,7 @@ interface ArchiveTableProps {
 
 const ArchiveTable = ({ files }: ArchiveTableProps) => {
   const toast = useToast();
+  const { organizationSettings } = useAuthenticateUser();
 
   const handleDownloadFile = async (file: DriveFile) => {
     const response = await fetch(file.Url);
@@ -114,10 +116,10 @@ const ArchiveTable = ({ files }: ArchiveTableProps) => {
           <Flex gap={1} align={"center"}>
             <Avatar
               size={"sm"}
-              src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQP9dhmiMXeXuheiAvGEafiA_AIl2gu3ACeKw&s"
-              name="teste"
+              src={organizationSettings?.LogoUrl}
+              name={organizationSettings?.Name}
             />
-            <Text>Equipe FPoles</Text>
+            <Text>Equipe {organizationSettings?.Name}</Text>
           </Flex>
         );
       },

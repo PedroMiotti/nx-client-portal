@@ -111,7 +111,7 @@ export default function Login() {
                   Portal do Cliente
                 </Heading>
                 <Text fontSize={"14px"} fontWeight={"400"} color="#616161">
-                  Por favor, insira seu cpf.
+                  Por favor, insira seu CPF.
                 </Text>
               </Flex>
 

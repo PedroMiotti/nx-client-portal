@@ -11,8 +11,9 @@ import {
   MenuButton,
   MenuList,
   MenuItem,
+  Image,
 } from "@chakra-ui/react";
-import Image from "next/image";
+// import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 
 import { useAuthenticateUser } from "@/lib/context/user";
@@ -23,7 +24,7 @@ const excludedRoutes = ["/auth"];
 export default function Navbar() {
   const router = useRouter();
   const pathname = usePathname();
-  const { user, handleLogout } = useAuthenticateUser();
+  const { user, organizationSettings, handleLogout } = useAuthenticateUser();
 
   const isExcludedRoute = excludedRoutes.find((route) =>
     pathname.includes(route)
@@ -39,8 +40,18 @@ export default function Navbar() {
       >
         <Flex h={16} alignItems={"center"} justifyContent={"space-between"}>
           <HStack spacing={8} alignItems={"center"}>
-            <Box overflow="hidden" position="relative" onClick={() => router.push('/')} _hover={{ cursor: 'pointer' }}>
-              <Image src={LogoFPoles} alt="Logo" width={90} height={90} />
+            <Box
+              overflow="hidden"
+              position="relative"
+              onClick={() => router.push("/")}
+              _hover={{ cursor: "pointer" }}
+            >
+              <Image
+                src={organizationSettings?.LogoUrl ?? ""}
+                alt="Logo"
+                w={"auto"}
+                h={12}
+              />
             </Box>
           </HStack>
           <HStack>
