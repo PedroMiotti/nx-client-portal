@@ -6,35 +6,24 @@ import {
   Avatar,
   HStack,
   Text,
-  IconButton,
   Button,
   Menu,
   MenuButton,
   MenuList,
   MenuItem,
-  useDisclosure,
-  useColorModeValue,
-  Stack,
-  Divider,
 } from "@chakra-ui/react";
-import { RxHamburgerMenu } from "react-icons/rx";
-import { IoMdClose } from "react-icons/io";
-import LogoPoles from "../../public/images/LogoFpoles.png";
 import Image from "next/image";
-import { useAuthenticateUser } from "@/lib/context/user";
 import { usePathname, useRouter } from "next/navigation";
 
-interface Props {
-  children: React.ReactNode;
-}
+import { useAuthenticateUser } from "@/lib/context/user";
+import LogoFPoles from "../../public/images/logo-poles2.svg";
 
 const excludedRoutes = ["/auth"];
 
 export default function Navbar() {
-  const pathname = usePathname();
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const { user, handleLogout } = useAuthenticateUser();
   const router = useRouter();
+  const pathname = usePathname();
+  const { user, handleLogout } = useAuthenticateUser();
 
   const isExcludedRoute = excludedRoutes.find((route) =>
     pathname.includes(route)
@@ -46,12 +35,12 @@ export default function Navbar() {
         bg={"white"}
         borderBottom={"1px solid"}
         borderBottomColor={"#D4D4D4"}
-        px={6}
+        px={8}
       >
         <Flex h={16} alignItems={"center"} justifyContent={"space-between"}>
           <HStack spacing={8} alignItems={"center"}>
-            <Box overflow="hidden" position="relative">
-              <Image src={LogoPoles} alt="Logo" width={150} height={150} />
+            <Box overflow="hidden" position="relative" onClick={() => router.push('/')} _hover={{ cursor: 'pointer' }}>
+              <Image src={LogoFPoles} alt="Logo" width={90} height={90} />
             </Box>
           </HStack>
           <HStack>
