@@ -28,6 +28,7 @@ import { MdOutlineCloudDownload } from "react-icons/md";
 import { blobToURL } from "@/shared/utils/Blob";
 import { downloadFolder } from "@/lib/api/Drive";
 import { useAuthenticateUser } from "@/lib/context/user";
+import { useMemo } from "react";
 
 type ArchiveFile = DriveFile | DriveFolder;
 
@@ -160,8 +161,20 @@ const ArchiveTable = ({ files }: ArchiveTableProps) => {
     }),
   ];
 
+  const orderedFilesByName = useMemo(
+    () =>
+      files?.sort((a, b) => {
+        return a.Name.localeCompare(b.Name);
+      }),
+    [files]
+  );
+
   return (
-    <DataTable columns={archiveColumns} loading={false} data={files ?? []} />
+    <DataTable
+      columns={archiveColumns}
+      loading={false}
+      data={orderedFilesByName ?? []}
+    />
   );
 };
 
