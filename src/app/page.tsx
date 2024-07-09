@@ -4,7 +4,7 @@ import CardProjects from "@/components/Cards/CardProjects";
 import { fetchAllClientProjects } from "@/lib/api/Projects";
 import { useAuthenticateUser } from "@/lib/context/user";
 import { usePaginatedQuery } from "@/lib/hooks/usePaginatedQuery";
-import { Flex, Heading, SimpleGrid, Text } from "@chakra-ui/react";
+import { Flex, Grid, Heading, SimpleGrid, Text } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
 import Casa1 from "../../public/images/CasaPoles1.jpg";
 import Loader from "@/components/Loader";
@@ -33,29 +33,27 @@ export default function Projects() {
   if (isProjectsLoading) return <Loader />;
 
   return (
-    <Flex w={"full"} h={"80vh"} justify={"center"} align={"center"}>
-      <Flex direction={"column"} textAlign={"center"} gap={10}>
-        <Flex direction={"column"}>
-          <Heading fontFamily={"title"} fontWeight={"regular"}>
-            Bem-vindo(a), {user?.Name}!
-          </Heading>
-          <Text fontFamily={"title"} fontWeight={"regular"} fontSize={"2xl"}>
-            Selecione o seu projeto.
-          </Text>
-        </Flex>
+    <Flex maxW={"full"} h={"80vh"} justify={"center"} align={"center"} flexDir={'column'} gap={8}>
+      <Flex direction={"column"}>
+        <Heading fontFamily={"title"} fontWeight={"regular"}>
+          Bem-vindo(a), {user?.Name}!
+        </Heading>
+        <Text fontFamily={"title"} fontWeight={"regular"} fontSize={"2xl"}>
+          Selecione o seu projeto.
+        </Text>
+      </Flex>
 
-        <SimpleGrid minChildWidth="260px" gap={3}>
-          {projects?.Data?.slice(0, 4).map((data, index) => {
-            const mockImage = mockImages[index];
-            return (
-              <CardProjects
-                key={data.Id}
-                project={data}
-                tempProjectImage={mockImage}
-              />
-            );
-          })}
-        </SimpleGrid>
+      <Flex  w={'full'} alignItems={'center'} justifyContent={'center'} gap={3}>
+        {projects?.Data?.slice(0, 4).map((data, index) => {
+          const mockImage = mockImages[index];
+          return (
+            <CardProjects
+              key={data.Id}
+              project={data}
+              tempProjectImage={mockImage}
+            />
+          );
+        })}
       </Flex>
     </Flex>
   );
