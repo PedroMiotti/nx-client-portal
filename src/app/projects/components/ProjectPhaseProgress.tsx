@@ -11,6 +11,7 @@ import {
   Flex,
   Text,
 } from "@chakra-ui/react";
+import { useMemo } from "react";
 import { BiRadioCircleMarked } from "react-icons/bi";
 import { FaCheckSquare } from "react-icons/fa";
 import { IoIosCheckmark } from "react-icons/io";
@@ -20,9 +21,17 @@ interface ProjectPhaseProgressProps {
 }
 
 const ProjectPhaseProgress = ({ project }: ProjectPhaseProgressProps) => {
+  const orderedPhases = useMemo(() => {
+    return project?.Phase?.sort((a, b) => {
+      return a.Id - b.Id;
+    });
+  }, [project]);
+
+  console.log(orderedPhases)
+
   return (
     <Accordion w={"full"} allowMultiple>
-      {project?.Phase?.map((phase, index) => {
+      {orderedPhases?.map((phase, index) => {
         const isPhaseConcluded = phase?.ConcludedAt !== null;
         const isPhaseInProgress = phase?.IsActive === true && !isPhaseConcluded;
 
@@ -57,11 +66,14 @@ const ProjectPhaseProgress = ({ project }: ProjectPhaseProgressProps) => {
                   task.BoardStatus.BoardStatusTypeId === 4;
                 const isInProgress = task.BoardStatus.BoardStatusTypeId === 2;
 
-                const color = isComplete ? "#4caa78" : isInProgress ? "#3182ce" : '#b0b2b5';
+                const color = isComplete
+                  ? "#4caa78"
+                  : isInProgress
+                  ? "#3182ce"
+                  : "#b0b2b5";
                 return (
                   <Flex key={task.Id} px={"32px"} align={"center"} gap={2}>
-                    
-                    <BiRadioCircleMarked color={color} fontSize={"18px"}/>
+                    <BiRadioCircleMarked color={color} fontSize={"18px"} />
                     <Text fontSize={"sm"}>{task.Name}</Text>
                   </Flex>
                 );
