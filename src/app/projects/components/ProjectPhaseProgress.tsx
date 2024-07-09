@@ -27,8 +27,6 @@ const ProjectPhaseProgress = ({ project }: ProjectPhaseProgressProps) => {
     });
   }, [project]);
 
-  console.log(orderedPhases)
-
   return (
     <Accordion w={"full"} allowMultiple>
       {orderedPhases?.map((phase, index) => {

@@ -60,7 +60,7 @@ export default function ProjectHome() {
   if (isLoading || archivesIsLoading || !data) return <Loader />;
 
   return (
-    <Flex h={"full"} w={"full"} p={8} direction={"row"} gap={6}>
+    <Flex h={"full"} w={"full"} p={8} direction={"row"} maxH={'600px'} gap={6}>
       <Flex flex={1} h={"full"} direction={"column"} gap={6}>
         <Flex
           w={"full"}
@@ -128,6 +128,9 @@ export default function ProjectHome() {
           rounded={"xl"}
           gap={2}
           direction={"column"}
+          overflowX={"hidden"}
+          overflowY={"scroll"}
+          maxH={'394px'}
         >
           <Flex
             justify={"space-between"}
@@ -158,8 +161,7 @@ export default function ProjectHome() {
             p={2}
             flexDir={"column"}
             gap={4}
-            overflowX={"hidden"}
-            overflowY={"scroll"}
+
             sx={{
               "&::-webkit-scrollbar": {
                 width: "8px",
@@ -196,6 +198,8 @@ export default function ProjectHome() {
         border={"1px solid"}
         borderColor={"#E9E9E9"}
         p={6}
+        overflowX={"hidden"}
+        overflowY={"scroll"}
       >
         <Flex
           h={"70px"}
@@ -211,12 +215,12 @@ export default function ProjectHome() {
             w={"full"}
             direction={"row"}
           >
-            <Flex >
+            <Flex>
               <Heading fontSize={"lg"} color={"#494949"} fontWeight={"light"}>
                 Etapas
               </Heading>
             </Flex>
-            <Flex direction={"row"} align={"center"} gap={2} w={'fit-content'}>
+            <Flex direction={"row"} align={"center"} gap={2} w={"fit-content"}>
               <Text fontSize={"xs"}>Progresso total:</Text>
               <Progress
                 colorScheme="green"
