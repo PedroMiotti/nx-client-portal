@@ -12,8 +12,7 @@ import {
   Text,
 } from "@chakra-ui/react";
 import { useMemo } from "react";
-import { BiRadioCircleMarked } from "react-icons/bi";
-import { FaCheckSquare } from "react-icons/fa";
+import { FaCheckSquare, FaRegMinusSquare, FaRegSquare } from "react-icons/fa";
 import { IoIosCheckmark } from "react-icons/io";
 
 interface ProjectPhaseProgressProps {
@@ -30,8 +29,18 @@ const ProjectPhaseProgress = ({ project }: ProjectPhaseProgressProps) => {
   return (
     <Accordion w={"full"} allowMultiple>
       {orderedPhases?.map((phase, index) => {
-        const isPhaseConcluded = phase?.ConcludedAt !== null;
-        const isPhaseInProgress = phase?.IsActive === true && !isPhaseConcluded;
+        const isAllTasksConcluded = phase?.Task?.every(
+          (task) =>
+            task.BoardStatus.BoardStatusTypeId === 3 ||
+            task.BoardStatus.BoardStatusTypeId === 4
+        );
+        const isPhaseConcluded =
+          phase?.ConcludedAt !== null || isAllTasksConcluded;
+
+        const isSomeTaskInProgress = phase?.Task?.some(
+          (task) => task.BoardStatus.BoardStatusTypeId === 2
+        );
+        const isPhaseInProgress = isSomeTaskInProgress && !isPhaseConcluded;
 
         return (
           <AccordionItem key={index} border={"none"}>
@@ -48,7 +57,7 @@ const ProjectPhaseProgress = ({ project }: ProjectPhaseProgressProps) => {
                     )}
                   </Box>
                   <Box as="span" flex="1" textAlign="left">
-                    {index + 1}. {phase.Title}
+                    {phase.Title}
                   </Box>
                 </Flex>
 
@@ -64,14 +73,15 @@ const ProjectPhaseProgress = ({ project }: ProjectPhaseProgressProps) => {
                   task.BoardStatus.BoardStatusTypeId === 4;
                 const isInProgress = task.BoardStatus.BoardStatusTypeId === 2;
 
-                const color = isComplete
-                  ? "#4caa78"
-                  : isInProgress
-                  ? "#3182ce"
-                  : "#b0b2b5";
                 return (
                   <Flex key={task.Id} px={"32px"} align={"center"} gap={2}>
-                    <BiRadioCircleMarked color={color} fontSize={"18px"} />
+                    {isComplete ? (
+                      <FaCheckSquare color="#4caa78" />
+                    ) : isInProgress ? (
+                      <FaRegMinusSquare color="#3182ce" />
+                    ) : (
+                      <FaRegSquare color="#b0b2b5" />
+                    )}
                     <Text fontSize={"sm"}>{task.Name}</Text>
                   </Flex>
                 );
